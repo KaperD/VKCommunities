@@ -11,7 +11,10 @@ import com.facebook.drawee.generic.RoundingParams
 import com.facebook.drawee.view.SimpleDraweeView
 
 
-class CommunitiesAdapter(private val color: Int) : RecyclerView.Adapter<CommunitiesAdapter.MyViewHolder>() {
+class CommunitiesAdapter(
+    private val viewModel: CommunitiesViewModel,
+    private val color: Int
+) : RecyclerView.Adapter<CommunitiesAdapter.MyViewHolder>() {
 
     private var list: List<Community> = emptyList()
 
@@ -49,6 +52,11 @@ class CommunitiesAdapter(private val color: Int) : RecyclerView.Adapter<Communit
         holder.logo.setImageURI(uri)
 
         holder.itemView.setOnClickListener {
+            if (community.isChosen) {
+                viewModel.removeChoice(community.id)
+            } else {
+                viewModel.addChoice(community.id)
+            }
             community.isChosen = !community.isChosen
             notifyItemChanged(position)
         }
