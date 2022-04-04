@@ -6,5 +6,6 @@ data class Community(
     val id: UserId,
     val name: String?,
     val logoUrl: String?,
-    var isChosen: Boolean = false
+    var isChosen: Boolean = false,
+    var isSubscribed: Boolean = true
 )

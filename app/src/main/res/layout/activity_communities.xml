@@ -7,6 +7,25 @@
     tools:context=".CommunitiesActivity"
     android:orientation="vertical">
 
+    <androidx.appcompat.widget.Toolbar
+        android:layout_width="match_parent"
+        android:layout_height="?android:actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        app:title="Сообщества"
+        app:titleTextColor="?attr/titleTextColor">
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:id="@+id/switch_mode"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_gravity="end"
+            android:text="Недавние отписки"
+            app:switchMinWidth="56dp"
+            android:showText="true" />
+    </androidx.appcompat.widget.Toolbar>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/communities"
         android:layout_width="match_parent"
@@ -35,10 +54,11 @@
         android:visibility="gone">
 
         <TextView
+            android:id="@+id/action_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="10dp"
-            android:text="Отписаться"
+            android:text=""
             android:textAlignment="textEnd"
             android:textColor="@color/white"
             android:textSize="16sp" />

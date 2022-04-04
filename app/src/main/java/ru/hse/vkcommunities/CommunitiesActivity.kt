@@ -27,7 +27,6 @@ class CommunitiesActivity : AppCompatActivity() {
 
         binding = ActivityCommunitiesBinding.inflate(layoutInflater)
         setContentView(binding.root)
-        title = "Сообщества"
 
         viewModel = ViewModelProvider(this).get(CommunitiesViewModel::class.java)
 
@@ -43,21 +42,25 @@ class CommunitiesActivity : AppCompatActivity() {
 
         val cachedCommunities = viewModel.allCommunities
         if (cachedCommunities != null) {
-            adapter.setCommunitiesList(cachedCommunities)
+            setup(binding.switchMode.isChecked, adapter)
         } else {
             VK.execute(GroupsService().groupsGetExtended(), object :
                 VKApiCallback<GroupsGetObjectExtendedResponse> {
                 override fun success(result: GroupsGetObjectExtendedResponse) {
                     require(Looper.myLooper() == Looper.getMainLooper())
                     val newCommunities = result.items.map { Community(it.id, it.name, it.photo200) }
-                    adapter.setCommunitiesList(newCommunities)
                     viewModel.allCommunities = newCommunities
+                    setup(binding.switchMode.isChecked, adapter)
                 }
 
                 override fun fail(error: Exception) {
                     Log.e("DANIL", error.toString())
                 }
             })
+        }
+
+        binding.switchMode.setOnCheckedChangeListener { _, isChecked ->
+            setup(isChecked, adapter)
         }
 
         viewModel.numberOfChosen.observe(this) { numberOfChosen ->
@@ -68,14 +71,28 @@ class CommunitiesActivity : AppCompatActivity() {
                 binding.counter.text = numberOfChosen.toString()
             }
         }
+    }
 
+    private fun setup(isChecked: Boolean, adapter: CommunitiesAdapter) {
+        if (isChecked) {
+            setupSubscribe(adapter)
+        } else {
+            setupUnsubscribe(adapter)
+        }
+    }
+
+    private fun setupSubscribe(adapter: CommunitiesAdapter) {
+        viewModel.clearChoice()
+        updateSubscribeList(adapter)
+        binding.actionName.text = getString(R.string.subscribe)
         binding.actionButton.setOnClickListener {
             val chosen = viewModel.getChosenCommunities()
             chosen.forEach {
-                VK.execute(GroupsService().groupsLeave(it), object :
+                it.isSubscribed = true
+                VK.execute(GroupsService().groupsJoin(it.id), object :
                     VKApiCallback<BaseOkResponse> {
                     override fun success(result: BaseOkResponse) {
-                        Log.d("DANIL", "Leaved ${it.value}")
+                        Log.d("DANIL", "Joined ${it.name}")
                     }
 
                     override fun fail(error: Exception) {
@@ -83,12 +100,44 @@ class CommunitiesActivity : AppCompatActivity() {
                     }
                 })
             }
-            viewModel.allCommunities?.let { old ->
-                val new = old.filter { it.id !in chosen }
-                viewModel.allCommunities = new
-                adapter.setCommunitiesList(new)
-            }
+            updateSubscribeList(adapter)
             viewModel.clearChoice()
+        }
+    }
+
+    private fun updateSubscribeList(adapter: CommunitiesAdapter) {
+        viewModel.allCommunities?.let { all ->
+            adapter.setCommunitiesList(all.filter { !it.isSubscribed })
+        }
+    }
+
+    private fun setupUnsubscribe(adapter: CommunitiesAdapter) {
+        viewModel.clearChoice()
+        updateUnsubscribeList(adapter)
+        binding.actionName.text = getString(R.string.unsubscribe)
+        binding.actionButton.setOnClickListener {
+            val chosen = viewModel.getChosenCommunities()
+            chosen.forEach {
+                it.isSubscribed = false
+                VK.execute(GroupsService().groupsLeave(it.id), object :
+                    VKApiCallback<BaseOkResponse> {
+                    override fun success(result: BaseOkResponse) {
+                        Log.d("DANIL", "Left ${it.name}")
+                    }
+
+                    override fun fail(error: Exception) {
+                        Log.e("DANIL", error.toString())
+                    }
+                })
+            }
+            updateUnsubscribeList(adapter)
+            viewModel.clearChoice()
+        }
+    }
+
+    private fun updateUnsubscribeList(adapter: CommunitiesAdapter) {
+        viewModel.allCommunities?.let { all ->
+            adapter.setCommunitiesList(all.filter { it.isSubscribed })
         }
     }
 

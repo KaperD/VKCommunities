@@ -53,9 +53,9 @@ class CommunitiesAdapter(
 
         holder.itemView.setOnClickListener {
             if (community.isChosen) {
-                viewModel.removeChoice(community.id)
+                viewModel.removeChoice(community)
             } else {
-                viewModel.addChoice(community.id)
+                viewModel.addChoice(community)
             }
             community.isChosen = !community.isChosen
             notifyItemChanged(position)
