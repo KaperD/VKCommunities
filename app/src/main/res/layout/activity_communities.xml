@@ -33,7 +33,6 @@
         android:layout_weight="1"
         android:paddingStart="9dp"
         android:paddingEnd="9dp"
-        android:paddingBottom="12dp"
         tools:listitem="@layout/community" />
 
     <LinearLayout
@@ -43,6 +42,7 @@
         android:minHeight="44dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
+        android:layout_marginTop="12dp"
         android:layout_marginBottom="12dp"
         android:background="@drawable/button"
         android:foreground="?android:attr/selectableItemBackground"
