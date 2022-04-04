@@ -14,6 +14,8 @@ class CommunitiesViewModel : ViewModel() {
 
     var allCommunities: List<Community>? = null
 
+    var isInSubscribeMode = false
+
     fun addChoice(community: Community) {
         chosenCommunities[community.id] = community
         _numberOfChosen.value?.let {

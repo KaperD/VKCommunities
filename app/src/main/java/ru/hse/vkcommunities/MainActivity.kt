@@ -14,6 +14,7 @@ import com.vk.api.sdk.exceptions.VKAuthException
 
 class MainActivity : AppCompatActivity() {
     private lateinit var authLauncher: ActivityResultLauncher<Collection<VKScope>>
+    private val scopes = arrayListOf(VKScope.GROUPS)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         }
         val loginButton = findViewById<Button>(R.id.login)
         loginButton.setOnClickListener {
-            authLauncher.launch(arrayListOf(VKScope.GROUPS))
+            authLauncher.launch(scopes)
         }
     }
 
@@ -46,14 +47,14 @@ class MainActivity : AppCompatActivity() {
     private fun onLoginFailed(exception: VKAuthException) {
         if (!exception.isCanceled) {
             val descriptionResource =
-                if (exception.webViewError == WebViewClient.ERROR_HOST_LOOKUP) "R.string.message_connection_error"
-                else "R.string.message_unknown_error"
+                if (exception.webViewError == WebViewClient.ERROR_HOST_LOOKUP) R.string.connection_error
+                else R.string.unknown_error
             AlertDialog.Builder(this)
                 .setMessage(descriptionResource)
-                .setPositiveButton("R.string.vk_retry") { _, _ ->
-                    authLauncher.launch(arrayListOf(VKScope.WALL, VKScope.PHOTOS))
+                .setPositiveButton(R.string.retry) { _, _ ->
+                    authLauncher.launch(scopes)
                 }
-                .setNegativeButton(android.R.string.cancel) { dialog, _ ->
+                .setNegativeButton(R.string.cancel) { dialog, _ ->
                     dialog.dismiss()
                 }
                 .show()

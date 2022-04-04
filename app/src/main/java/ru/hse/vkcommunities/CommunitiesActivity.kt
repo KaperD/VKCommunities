@@ -15,7 +15,9 @@ import com.vk.api.sdk.VKApiCallback
 import com.vk.sdk.api.base.dto.BaseOkResponse
 import com.vk.sdk.api.groups.GroupsService
 import com.vk.sdk.api.groups.dto.GroupsGetObjectExtendedResponse
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import ru.hse.vkcommunities.databinding.ActivityCommunitiesBinding
 import ru.hse.vkcommunities.model.entity.Community
 import ru.hse.vkcommunities.model.repository.RecentCommunitiesRepository
@@ -37,7 +39,7 @@ class CommunitiesActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.progressBar.bringToFront()
-        binding.progressBar.setOnClickListener {  }
+        binding.progressBar.setOnClickListener { }
 
         viewModel = ViewModelProvider(this).get(CommunitiesViewModel::class.java)
         recentCommunitiesRepository = RecentCommunitiesRepository(this)
@@ -52,9 +54,11 @@ class CommunitiesActivity : AppCompatActivity() {
         adapter = CommunitiesAdapter(viewModel, getColor(R.color.light_blue))
         binding.communities.adapter = adapter
 
-        setupCommunities(binding.switchMode.isChecked)
+        setupCommunities(viewModel.isInSubscribeMode)
 
+        binding.switchMode.isChecked = viewModel.isInSubscribeMode
         binding.switchMode.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.isInSubscribeMode = isChecked
             viewModel.clearChoice()
             setupCommunities(isChecked)
         }

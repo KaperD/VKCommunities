@@ -3,4 +3,8 @@
     <integer name="com_vk_sdk_AppId">8125349</integer>
     <string name="unsubscribe">Отписаться</string>
     <string name="subscribe">Подписаться</string>
+    <string name="connection_error">Проблема с подключением</string>
+    <string name="unknown_error">Неизвестная ошибка</string>
+    <string name="retry">Повторить</string>
+    <string name="cancel">Отменить</string>
 </resources>
