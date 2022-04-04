@@ -7,4 +7,10 @@
     <string name="unknown_error">Неизвестная ошибка</string>
     <string name="retry">Повторить</string>
     <string name="cancel">Отменить</string>
+    <string name="skip">Пропустить</string>
+    <string name="login">Войти</string>
+    <string name="recent_communities">Недавние отписки</string>
+    <string name="loading_communities_error">Произошла ошибка во время загрузки сообществ</string>
+    <string name="leaving_community_error">Произошла ошибка во время выхода из сообщества: %s</string>
+    <string name="joining_community_error">Произошла ошибка во время вступления в сообщество: %s</string>
 </resources>

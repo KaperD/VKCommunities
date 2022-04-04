@@ -30,7 +30,7 @@ class CommunitiesViewModel : ViewModel() {
         }
     }
 
-    fun clearChoice() {
+    fun clearChosen() {
         chosenCommunities.values.forEach { it.isChosen = false }
         chosenCommunities.clear()
         _numberOfChosen.value = 0

@@ -59,7 +59,7 @@ class CommunitiesActivity : AppCompatActivity() {
         binding.switchMode.isChecked = viewModel.isInSubscribeMode
         binding.switchMode.setOnCheckedChangeListener { _, isChecked ->
             viewModel.isInSubscribeMode = isChecked
-            viewModel.clearChoice()
+            viewModel.clearChosen()
             setupCommunities(isChecked)
         }
 
@@ -168,7 +168,7 @@ class CommunitiesActivity : AppCompatActivity() {
                 }
             }
             actionAfter()
-            viewModel.clearChoice()
+            viewModel.clearChosen()
             binding.progressBar.visibility = View.INVISIBLE
             binding.body.alpha = 1f
         }
@@ -209,11 +209,11 @@ class CommunitiesActivity : AppCompatActivity() {
 
                     override fun fail(error: Exception) {
                         AlertDialog.Builder(this@CommunitiesActivity)
-                            .setMessage("Произошла ошибка во время загрузки сообществ")
-                            .setPositiveButton("Повторить") { _, _ ->
+                            .setMessage(R.string.loading_communities_error)
+                            .setPositiveButton(R.string.retry) { _, _ ->
                                 continuation.resumeWithException(RepeatException)
                             }
-                            .setNegativeButton("Отменить") { _, _ ->
+                            .setNegativeButton(R.string.cancel) { _, _ ->
                                 continuation.resumeWithException(error)
                             }
                             .show()
@@ -232,11 +232,13 @@ class CommunitiesActivity : AppCompatActivity() {
 
                 override fun fail(error: Exception) {
                     AlertDialog.Builder(this@CommunitiesActivity)
-                        .setMessage("Произошла ошибка во время загрузки сообществ")
-                        .setPositiveButton("Повторить") { _, _ ->
+                        .setMessage(
+                            getString(R.string.leaving_community_error).format(community.name)
+                        )
+                        .setPositiveButton(R.string.retry) { _, _ ->
                             continuation.resumeWithException(RepeatException)
                         }
-                        .setNegativeButton("Пропустить") { _, _ ->
+                        .setNegativeButton(R.string.skip) { _, _ ->
                             continuation.resumeWithException(error)
                         }
                         .show()
@@ -254,11 +256,13 @@ class CommunitiesActivity : AppCompatActivity() {
 
                 override fun fail(error: Exception) {
                     AlertDialog.Builder(this@CommunitiesActivity)
-                        .setMessage("Произошла ошибка во время загрузки сообществ")
-                        .setPositiveButton("Повторить") { _, _ ->
+                        .setMessage(
+                            getString(R.string.joining_community_error).format(community.name)
+                        )
+                        .setPositiveButton(R.string.retry) { _, _ ->
                             continuation.resumeWithException(RepeatException)
                         }
-                        .setNegativeButton("Пропустить") { _, _ ->
+                        .setNegativeButton(R.string.skip) { _, _ ->
                             continuation.resumeWithException(error)
                         }
                         .show()

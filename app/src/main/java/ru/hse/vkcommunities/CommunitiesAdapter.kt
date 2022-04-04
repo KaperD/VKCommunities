@@ -40,14 +40,17 @@ class CommunitiesAdapter(
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val community = list[position]
-        holder.name.text = community.name
-        holder.check.visibility = if (community.isChosen) View.VISIBLE else View.INVISIBLE
-        holder.logo.hierarchy.roundingParams = RoundingParams.asCircle()
-            .apply {
-                if (community.isChosen) {
-                    setBorder(color, 10.0f)
+        fun setBorder() {
+            holder.check.visibility = if (community.isChosen) View.VISIBLE else View.INVISIBLE
+            holder.logo.hierarchy.roundingParams = RoundingParams.asCircle()
+                .apply {
+                    if (community.isChosen) {
+                        setBorder(color, 10.0f)
+                    }
                 }
-            }
+        }
+        holder.name.text = community.name
+        setBorder()
         holder.logo.setImageURI(null as String?)
         val uri = Uri.parse(community.logoUrl)
         holder.logo.setImageURI(uri)
@@ -59,13 +62,7 @@ class CommunitiesAdapter(
                 viewModel.addChoice(community)
             }
             community.isChosen = !community.isChosen
-            holder.check.visibility = if (community.isChosen) View.VISIBLE else View.INVISIBLE
-            holder.logo.hierarchy.roundingParams = RoundingParams.asCircle()
-                .apply {
-                    if (community.isChosen) {
-                        setBorder(color, 10.0f)
-                    }
-                }
+            setBorder()
         }
     }
 
