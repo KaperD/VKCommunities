@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.vk.dto.common.id.UserId
+import ru.hse.vkcommunities.model.entity.Community
 
 class CommunitiesViewModel : ViewModel() {
     private val chosenCommunities = mutableMapOf<UserId, Community>()

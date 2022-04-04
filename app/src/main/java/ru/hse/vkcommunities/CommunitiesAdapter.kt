@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.facebook.drawee.generic.RoundingParams
 import com.facebook.drawee.view.SimpleDraweeView
+import ru.hse.vkcommunities.model.entity.Community
 
 
 class CommunitiesAdapter(
@@ -58,7 +59,13 @@ class CommunitiesAdapter(
                 viewModel.addChoice(community)
             }
             community.isChosen = !community.isChosen
-            notifyItemChanged(position)
+            holder.check.visibility = if (community.isChosen) View.VISIBLE else View.INVISIBLE
+            holder.logo.hierarchy.roundingParams = RoundingParams.asCircle()
+                .apply {
+                    if (community.isChosen) {
+                        setBorder(color, 10.0f)
+                    }
+                }
         }
     }
 
