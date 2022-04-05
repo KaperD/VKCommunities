@@ -34,35 +34,24 @@ class CommunitiesActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         binding = ActivityCommunitiesBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
-        binding.progressBar.bringToFront()
-        binding.progressBar.setOnClickListener { }
 
         viewModel = ViewModelProvider(this).get(CommunitiesViewModel::class.java)
         recentCommunitiesRepository = RecentCommunitiesRepository(this)
 
-        val columns = when (resources.configuration.orientation) {
-            Configuration.ORIENTATION_PORTRAIT -> 3
-            Configuration.ORIENTATION_LANDSCAPE -> 5
-            else -> 3
-        }
-        binding.communities.layoutManager =
-            GridLayoutManager(this, columns, GridLayoutManager.VERTICAL, false)
-        adapter = CommunitiesAdapter(viewModel, getColor(R.color.light_blue))
-        binding.communities.adapter = adapter
+        setupProgressBar()
+        setupActionButton()
+        setupSwitch()
+        setupCommunities()
+    }
 
-        setupCommunities(viewModel.isInSubscribeMode)
+    private fun setupProgressBar() {
+        binding.progressBar.bringToFront()
+        binding.progressBar.setOnClickListener { }
+    }
 
-        binding.switchMode.isChecked = viewModel.isInSubscribeMode
-        binding.switchMode.setOnCheckedChangeListener { _, isChecked ->
-            viewModel.isInSubscribeMode = isChecked
-            viewModel.clearChosen()
-            setupCommunities(isChecked)
-        }
-
+    private fun setupActionButton() {
         viewModel.numberOfChosen.observe(this) { numberOfChosen ->
             if (numberOfChosen == 0) {
                 binding.actionButton.visibility = View.GONE
@@ -73,28 +62,41 @@ class CommunitiesActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupCommunities(isChecked: Boolean) {
+    private fun setupSwitch() {
+        binding.switchMode.isChecked = viewModel.isInSubscribeMode
+        binding.switchMode.setOnCheckedChangeListener { _, isChecked ->
+            viewModel.isInSubscribeMode = isChecked
+            viewModel.clearChosen()
+            setupCommunities()
+        }
+    }
+
+    private fun setupCommunities() {
+        val columns = when (resources.configuration.orientation) {
+            Configuration.ORIENTATION_PORTRAIT -> 3
+            Configuration.ORIENTATION_LANDSCAPE -> 5
+            else -> 3
+        }
+        binding.communities.layoutManager =
+            GridLayoutManager(this, columns, GridLayoutManager.VERTICAL, false)
+        adapter = CommunitiesAdapter(viewModel, getColor(R.color.light_blue))
+        binding.communities.adapter = adapter
+
         lifecycleScope.launch {
-            if (viewModel.allCommunities == null) {
-                binding.progressBar.visibility = View.VISIBLE
-                binding.body.visibility = View.INVISIBLE
-                try {
+            safeAction({
+                if (viewModel.allCommunities == null) {
+                    binding.progressBar.visibility = View.VISIBLE
+                    binding.body.visibility = View.INVISIBLE
                     viewModel.allCommunities = loadData()
-                } catch (ignored: RepeatException) {
-                    setupCommunities(isChecked)
-                    return@launch
-                } catch (ignored: Exception) {
                     binding.progressBar.visibility = View.INVISIBLE
-                    return@launch
+                    binding.body.visibility = View.VISIBLE
                 }
-                binding.progressBar.visibility = View.INVISIBLE
-                binding.body.visibility = View.VISIBLE
-            }
-            if (isChecked) {
-                setupSubscribe()
-            } else {
-                setupUnsubscribe()
-            }
+                if (viewModel.isInSubscribeMode) {
+                    setupSubscribe()
+                } else {
+                    setupUnsubscribe()
+                }
+            }) { binding.progressBar.visibility = View.INVISIBLE }
         }
     }
 
@@ -109,15 +111,11 @@ class CommunitiesActivity : AppCompatActivity() {
     }
 
     private suspend fun safeJoinCommunity(community: Community) {
-        try {
+        safeAction({
             joinCommunity(community)
             recentCommunitiesRepository.delete(community)
             community.isSubscribed = true
-        } catch (ignored: RepeatException) {
-            safeJoinCommunity(community)
-        } catch (ignored: Exception) {
-            return
-        }
+        })
     }
 
     private fun updateSubscribeList() {
@@ -137,15 +135,11 @@ class CommunitiesActivity : AppCompatActivity() {
     }
 
     private suspend fun safeLeaveCommunity(community: Community) {
-        try {
+        safeAction({
             leaveCommunity(community)
             recentCommunitiesRepository.insert(community)
             community.isSubscribed = false
-        } catch (ignored: RepeatException) {
-            safeLeaveCommunity(community)
-        } catch (ignored: Exception) {
-            return
-        }
+        })
     }
 
     private fun updateUnsubscribeList() {
@@ -211,7 +205,7 @@ class CommunitiesActivity : AppCompatActivity() {
                         AlertDialog.Builder(this@CommunitiesActivity)
                             .setMessage(R.string.loading_communities_error)
                             .setPositiveButton(R.string.retry) { _, _ ->
-                                continuation.resumeWithException(RepeatException)
+                                continuation.resumeWithException(RetryException)
                             }
                             .setNegativeButton(R.string.cancel) { _, _ ->
                                 continuation.resumeWithException(error)
@@ -236,7 +230,7 @@ class CommunitiesActivity : AppCompatActivity() {
                             getString(R.string.leaving_community_error).format(community.name)
                         )
                         .setPositiveButton(R.string.retry) { _, _ ->
-                            continuation.resumeWithException(RepeatException)
+                            continuation.resumeWithException(RetryException)
                         }
                         .setNegativeButton(R.string.skip) { _, _ ->
                             continuation.resumeWithException(error)
@@ -260,7 +254,7 @@ class CommunitiesActivity : AppCompatActivity() {
                             getString(R.string.joining_community_error).format(community.name)
                         )
                         .setPositiveButton(R.string.retry) { _, _ ->
-                            continuation.resumeWithException(RepeatException)
+                            continuation.resumeWithException(RetryException)
                         }
                         .setNegativeButton(R.string.skip) { _, _ ->
                             continuation.resumeWithException(error)
@@ -270,6 +264,23 @@ class CommunitiesActivity : AppCompatActivity() {
             })
         }
 
+    private suspend fun safeAction(
+        action: suspend () -> Unit,
+        onFail: suspend () -> Unit = {}
+    ) {
+        retry@ while (true) {
+            try {
+                action()
+                return
+            } catch (ignored: RetryException) {
+                continue@retry
+            } catch (ignored: Exception) {
+                onFail()
+                return
+            }
+        }
+    }
+
     companion object {
         fun startFrom(context: Context) {
             val intent = Intent(context, CommunitiesActivity::class.java)
@@ -278,4 +289,4 @@ class CommunitiesActivity : AppCompatActivity() {
     }
 }
 
-object RepeatException : Exception()
+object RetryException : Exception()
