@@ -2,7 +2,6 @@ package ru.hse.vkcommunities
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import android.webkit.WebViewClient
 import android.widget.Button
 import androidx.activity.result.ActivityResultLauncher
@@ -27,7 +26,7 @@ class MainActivity : AppCompatActivity() {
 
         setContentView(R.layout.activity_main)
 
-        authLauncher = VK.login(this) { result : VKAuthenticationResult ->
+        authLauncher = VK.login(this) { result: VKAuthenticationResult ->
             when (result) {
                 is VKAuthenticationResult.Success -> onLogin()
                 is VKAuthenticationResult.Failed -> onLoginFailed(result.exception)
@@ -47,7 +46,7 @@ class MainActivity : AppCompatActivity() {
     private fun onLoginFailed(exception: VKAuthException) {
         if (!exception.isCanceled) {
             val descriptionResource =
-                if (exception.webViewError == WebViewClient.ERROR_HOST_LOOKUP) R.string.connection_error
+                if (exception.webViewError == WebViewClient.ERROR_CONNECT) R.string.connection_error
                 else R.string.unknown_error
             AlertDialog.Builder(this)
                 .setMessage(descriptionResource)
