@@ -4,4 +4,4 @@
 [app/release/app-release.apk](app/release/app-release.apk)
 
 ## Video
-https://user-images.githubusercontent.com/46494802/161646325-57932a52-6f64-444e-ab99-5e92ffdd80f8.mp4
+https://user-images.githubusercontent.com/46494802/161740536-9dfaad03-52e5-413e-aabd-9da6610577a4.mp4
