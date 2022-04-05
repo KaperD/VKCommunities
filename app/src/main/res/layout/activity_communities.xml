@@ -1,109 +1,100 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".CommunitiesActivity"
-    android:orientation="vertical">
+    tools:context=".CommunitiesActivity">
 
-    <androidx.appcompat.widget.Toolbar
-        android:layout_width="match_parent"
-        android:layout_height="?android:actionBarSize"
-        android:background="?attr/colorPrimary"
-        android:elevation="4dp"
-        app:title="Сообщества"
-        app:titleTextColor="?attr/titleTextColor">
-
-        <androidx.appcompat.widget.SwitchCompat
-            android:id="@+id/switch_mode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="16dp"
-            android:layout_gravity="end"
-            android:text="@string/recent_communities"
-            app:switchMinWidth="56dp"
-            android:showText="true" />
-    </androidx.appcompat.widget.Toolbar>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <RelativeLayout
+        android:id="@+id/progressBar"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
-            android:id="@+id/body"
+        <ProgressBar
+            style="?android:attr/progressBarStyle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"/>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:id="@+id/body"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <androidx.appcompat.widget.Toolbar
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="?android:actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:elevation="4dp"
+            app:title="Сообщества"
+            app:titleTextColor="?attr/titleTextColor">
 
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/communities"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="1"
-                android:paddingStart="9dp"
-                android:paddingEnd="9dp"
-                tools:listitem="@layout/community" />
-
-            <LinearLayout
-                android:id="@+id/action_button"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
-                android:layout_marginTop="12dp"
-                android:layout_marginEnd="16dp"
-                android:layout_marginBottom="12dp"
-                android:background="@drawable/button"
-                android:foreground="?android:attr/selectableItemBackground"
-                android:gravity="center"
-                android:minHeight="44dp"
-                android:orientation="horizontal"
-                android:visibility="gone"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent">
-
-                <TextView
-                    android:id="@+id/action_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="10dp"
-                    android:text=""
-                    android:textAlignment="textEnd"
-                    android:textColor="@color/white"
-                    android:textSize="16sp" />
-
-                <TextView
-                    android:id="@+id/counter"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:background="@drawable/counter"
-                    android:minWidth="24dp"
-                    android:minHeight="24dp"
-                    android:paddingStart="6dp"
-                    android:paddingTop="2dp"
-                    android:paddingEnd="6dp"
-                    android:text=""
-                    android:textAlignment="center"
-                    android:textColor="@color/blue"
-                    android:textSize="15sp"
-                    android:textStyle="bold" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <RelativeLayout
-            android:id="@+id/progressBar"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:visibility="invisible">
-            <ProgressBar
-                style="?android:attr/progressBarStyle"
+            <androidx.appcompat.widget.SwitchCompat
+                android:id="@+id/switch_mode"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"/>
-        </RelativeLayout>
+                android:layout_marginEnd="16dp"
+                android:layout_gravity="end"
+                android:text="@string/recent_communities"
+                app:switchMinWidth="56dp"
+                android:showText="true" />
+        </androidx.appcompat.widget.Toolbar>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/communities"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingStart="9dp"
+            android:paddingEnd="9dp"
+            tools:listitem="@layout/community" />
 
-</LinearLayout>
+        <LinearLayout
+            android:id="@+id/action_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginBottom="12dp"
+            android:background="@drawable/button"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:gravity="center"
+            android:minHeight="44dp"
+            android:orientation="horizontal"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
+
+            <TextView
+                android:id="@+id/action_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="10dp"
+                android:text=""
+                android:textAlignment="textEnd"
+                android:textColor="@color/white"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/counter"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/counter"
+                android:minWidth="24dp"
+                android:minHeight="24dp"
+                android:paddingStart="6dp"
+                android:paddingTop="2dp"
+                android:paddingEnd="6dp"
+                android:text=""
+                android:textAlignment="center"
+                android:textColor="@color/blue"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </LinearLayout>
+</RelativeLayout>

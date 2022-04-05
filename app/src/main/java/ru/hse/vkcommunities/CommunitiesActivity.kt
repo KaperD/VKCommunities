@@ -47,6 +47,7 @@ class CommunitiesActivity : AppCompatActivity() {
     }
 
     private fun setupProgressBar() {
+        binding.progressBar.visibility = View.INVISIBLE
         binding.progressBar.bringToFront()
         binding.progressBar.setOnClickListener { }
     }
